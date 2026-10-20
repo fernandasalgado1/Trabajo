@@ -1,121 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Local MVP</title>
-    <!-- Tailwind CSS para diseño rápido -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 font-sans">
-
-    <!-- HEADER / NAVEGACIÓN -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-indigo-600">Tienda Local MVP</h1>
-            <div class="flex items-center gap-4">
-                <!-- RSV-009: Login Social Simulado -->
-                <button onclick="simularLogin()" id="btn-login" class="bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-sm font-medium">
-                    Iniciar Sesión (Google)
-                </button>
-                <!-- RSV-006: Carrito -->
-                <button onclick="toggleCarrito()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                    🛒 Carrito (<span id="cart-count">0</span>)
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- RSV-002: Categorías y Filtros -->
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button onclick="filtrar('todos')" class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm">Todos</button>
-            <button onclick="filtrar('ofertas')" class="px-4 py-2 bg-white border rounded-full text-sm">Ofertas</button>
-            <button onclick="filtrar('tendencias')" class="px-4 py-2 bg-white border rounded-full text-sm">Tendencias</button>
-        </div>
-
-        <!-- RSV-001: Catálogo de Productos -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Los productos se inyectarán con JavaScript -->
-        </div>
-    </main>
-
-    <!-- MODAL DE CHECKOUT (RSV-008 & RSV-010) -->
-    <div id="checkout-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-xl max-w-md w-full">
-            <h2 class="text-lg font-bold mb-4">Checkout Simulado</h2>
-            <form onsubmit="procesarPago(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium">Nombre completo (RSV-005)</label>
-                    <input type="text" required class="w-full border rounded-lg p-2 mt-1" placeholder="Juan Pérez">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">Dirección de entrega</label>
-                    <input type="text" required class="w-full border rounded-lg p-2 mt-1" placeholder="Calle Falsa 123">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">Método de pago (RSV-010)</label>
-                    <select class="w-full border rounded-lg p-2 mt-1">
-                        <option>Webpay Plus (Simulado)</option>
-                        <option>PayPal (Simulado)</option>
-                        <option>Transferencia Bancaria</option>
-                    </select>
-                </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="toggleCheckout()" class="px-4 py-2 border rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg">Pagar Ahora</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ASISTENTE INTELIGENTE / CHAT (RSV-007) -->
-    <div class="fixed bottom-4 right-4 z-50">
-        <button onclick="toggleChat()" class="bg-green-600 text-white p-3 rounded-full shadow-lg">💬 Asistente IA</button>
-        <div id="chat-box" class="hidden absolute bottom-14 right-0 w-80 bg-white border rounded-xl shadow-xl p-4">
-            <div class="flex justify-between items-center border-b pb-2 mb-2">
-                <span class="font-bold text-sm">Asistente Virtual IA</span>
-                <button onclick="toggleChat()" class="text-gray-500">✕</button>
-            </div>
-            <div class="h-40 overflow-y-auto text-sm space-y-2 mb-2 bg-gray-50 p-2 rounded" id="chat-messages">
-                <div class="text-gray-600">¡Hola! ¿Tienes dudas sobre algún producto o despacho? Pregúntame.</div>
-            </div>
-            <div class="flex gap-2">
-                <input type="text" id="chat-input" placeholder="Escribe tu duda..." class="border rounded-lg px-2 py-1 text-sm flex-1">
-                <button onclick="enviarMensajeIA()" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm">Enviar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT DE LÓGICA -->
+<!-- SCRIPT DE LÓGICA -->
     <script>
-        // Base de datos simulada en memoria
-        const productos = [
-            { id: 1, name: "Zapatillas Urbanas", price: 45990, category: "tendencias", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
-            { id: 2, name: "Audífonos Inalámbricos", price: 29990, category: "ofertas", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e" },
-            { id: 3, name: "Mochila Executiva", price: 34990, category: "tendencias", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62" },
-            { id: 4, name: "Reloj Inteligente", price: 59990, category: "ofertas", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30" }
-        ];
-
+        let productos = [];
         let carrito = [];
+
+        // Cargar productos desde la "base de datos" JSON
+        async function cargarProductos() {
+            try {
+                const response = await fetch('./productos.json');
+                productos = await response.json();
+                renderProductos();
+            } catch (error) {
+                console.error("Error cargando la base de datos de productos:", error);
+            }
+        }
 
         function renderProductos(filtro = 'todos') {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
             const filtrados = filtro === 'todos' ? productos : productos.filter(p => p.category === filtro);
             
+            if (filtrados.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No hay productos en esta categoría.</p>';
+                return;
+            }
+
             filtrados.forEach(p => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm border p-4 flex flex-col justify-between">
+                    <div class="bg-white rounded-xl shadow-sm border p-4 flex flex-col justify-between hover:shadow-md transition">
                         <div>
-                            <img src="${p.image}" class="w-full h-40 object-cover rounded-lg mb-3">
-                            <h3 class="font-bold text-gray-800">${p.name}</h3>
-                            <p class="text-indigo-600 font-semibold mt-1">$${p.price.toLocaleString()}</p>
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover rounded-lg mb-3">
+                            <span class="text-xs font-semibold uppercase text-indigo-500 tracking-wider">${p.category}</span>
+                            <h3 class="font-bold text-gray-800 text-lg">${p.name}</h3>
+                            <p class="text-xs text-gray-500 mt-1">${p.description || ''}</p>
+                            <p class="text-indigo-600 font-bold text-xl mt-2">$${p.price.toLocaleString('es-CL')}</p>
                         </div>
-                        <button onclick="agregarAlCarrito(${p.id})" class="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-800">
-                            Agregar al Carrito (RSV-006)
+                        <button onclick="agregarAlCarrito(${p.id})" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm transition">
+                            Agregar al Carrito
                         </button>
                     </div>
                 `;
@@ -126,14 +46,16 @@
 
         function agregarAlCarrito(id) {
             const prod = productos.find(p => p.id === id);
-            carrito.push(prod);
-            document.getElementById('cart-count').innerText = carrito.length;
-            alert(`¡${prod.name} agregado al carrito!`);
+            if (prod) {
+                carrito.push(prod);
+                document.getElementById('cart-count').innerText = carrito.length;
+                alert(`¡${prod.name} agregado al carrito!`);
+            }
         }
 
         function toggleCarrito() {
-            if(carrito.length === 0) {
-                alert("Tu carrito está vacío.");
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío. Agrega productos para continuar.");
             } else {
                 toggleCheckout();
             }
@@ -154,8 +76,8 @@
 
         function simularLogin() {
             document.getElementById('btn-login').innerText = "👤 Hola, Juan (Google)";
-            document.getElementById('btn-login').classList.add('bg-green-100', 'text-green-800');
-            alert("Sesión iniciada correctamente usando Social Login (RSV-009).");
+            document.getElementById('btn-login').className = "bg-green-100 text-green-800 font-medium px-3 py-1.5 rounded-lg text-sm";
+            alert("Sesión iniciada correctamente mediante Social Login (RSV-009).");
         }
 
         function toggleChat() {
@@ -181,8 +103,6 @@
             }, 500);
         }
 
-        // Inicializar
-        renderProductos();
+        // Cargar productos al iniciar la página
+        cargarProductos();
     </script>
-</body>
-</html>
