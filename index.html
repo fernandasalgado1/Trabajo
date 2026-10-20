@@ -39,6 +39,28 @@
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
 
+    <!-- MODAL DE SELECCIÓN DE CANTIDAD DE PRODUCTO -->
+    <div id="quantity-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl max-w-sm w-full shadow-2xl">
+            <h2 id="modal-product-title" class="text-lg font-bold mb-1 text-gray-800">Agregar Producto</h2>
+            <p id="modal-product-price" class="text-indigo-600 font-semibold mb-4 text-sm"></p>
+            
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cantidad a agregar</label>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="cambiarCantidadModal(-1)" class="w-10 h-10 border rounded-lg flex items-center justify-center text-gray-600 font-bold hover:bg-gray-100">-</button>
+                    <input type="number" id="product-quantity" min="1" value="1" class="w-full border rounded-lg p-2 text-center text-lg font-bold outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="button" onclick="cambiarCantidadModal(1)" class="w-10 h-10 border rounded-lg flex items-center justify-center text-gray-600 font-bold hover:bg-gray-100">+</button>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="cerrarModalCantidad()" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm">Cancelar</button>
+                <button type="button" onclick="confirmarAgregarAlCarrito()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE REGISTRO -->
     <div id="register-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl">
@@ -140,6 +162,7 @@
         ];
 
         let carrito = [];
+        let productoSeleccionadoId = null;
 
         function renderProductos(filtro = 'todos') {
             const grid = document.getElementById('product-grid');
@@ -166,15 +189,33 @@
 
         function filtrar(cat) { renderProductos(cat); }
 
+        // --- MANEJO DEL POPUP DE SELECCIÓN DE CANTIDAD ---
         function agregarAlCarrito(id) {
             const prod = productos.find(p => p.id === id);
             if (!prod) return;
 
-            // 1. Preguntar por la cantidad
-            const cantidadInput = prompt(`¿Cuántas unidades de "${prod.name}" deseas agregar?`, "1");
-            
-            // Validar que el usuario no haya cancelado y que haya ingresado un número válido
-            if (cantidadInput === null) return; // Cancelo la operación
+            productoSeleccionadoId = id;
+            document.getElementById('modal-product-title').innerText = prod.name;
+            document.getElementById('modal-product-price').innerText = `$${prod.price.toLocaleString('es-CL')} c/u`;
+            document.getElementById('product-quantity').value = 1;
+            document.getElementById('quantity-modal').classList.remove('hidden');
+        }
+
+        function cambiarCantidadModal(delta) {
+            const input = document.getElementById('product-quantity');
+            let val = parseInt(input.value, 10) || 1;
+            val += delta;
+            if (val < 1) val = 1;
+            input.value = val;
+        }
+
+        function cerrarModalCantidad() {
+            document.getElementById('quantity-modal').classList.add('hidden');
+            productoSeleccionadoId = null;
+        }
+
+        function confirmarAgregarAlCarrito() {
+            const cantidadInput = document.getElementById('product-quantity').value;
             const cantidad = parseInt(cantidadInput, 10);
 
             if (isNaN(cantidad) || cantidad <= 0) {
@@ -182,13 +223,9 @@
                 return;
             }
 
-            // 2. Preguntar confirmación antes de agregar
-            const totalEstimado = (prod.price * cantidad).toLocaleString('es-CL');
-            const confirmar = confirm(`¿Deseas agregar ${cantidad} unidad(es) de "${prod.name}" por un total de $${totalEstimado}?`);
-
-            if (confirmar) {
-                // Verificar si el producto ya está en el carrito para actualizar la cantidad o agregarlo nuevo
-                const itemExistente = carrito.find(item => item.id === id);
+            const prod = productos.find(p => p.id === productoSeleccionadoId);
+            if (prod) {
+                const itemExistente = carrito.find(item => item.id === productoSeleccionadoId);
                 if (itemExistente) {
                     itemExistente.cantidad += cantidad;
                 } else {
@@ -196,12 +233,11 @@
                 }
 
                 actualizarContadorCarrito();
-                alert(`¡Se agregaron ${cantidad} unidad(es) de "${prod.name}" al carrito!`);
+                cerrarModalCantidad();
             }
         }
 
         function actualizarContadorCarrito() {
-            // Sumar la cantidad total de unidades en el carrito
             const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
             document.getElementById('cart-count').innerText = totalUnidades;
         }
@@ -210,7 +246,6 @@
             if (carrito.length === 0) {
                 alert("Tu carrito está vacío. Agrega productos para continuar.");
             } else {
-                // Calcular total acumulado
                 const totalDinero = carrito.reduce((acc, item) => acc + (item.price * item.cantidad), 0);
                 const resumen = carrito.map(item => `- ${item.cantidad}x ${item.name} ($${(item.price * item.cantidad).toLocaleString('es-CL')})`).join('\n');
                 
@@ -227,7 +262,7 @@
             e.preventDefault();
             alert("¡Compra procesada con éxito mediante pasarela segura!");
             carrito = [];
-            document.getElementById('cart-count').innerText = 0;
+            actualizarContadorCarrito();
             toggleCheckout();
         }
 
@@ -249,7 +284,6 @@
 
             let usuarios = JSON.parse(localStorage.getItem('usuarios_mvp')) || [];
             
-            // Validar si ya existe
             if(usuarios.some(u => u.email === email)) {
                 alert("Este correo ya está registrado.");
                 return;
@@ -331,4 +365,3 @@
         verificarSesion();
     </script>
 </body>
-</html>
