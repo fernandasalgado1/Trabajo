@@ -20,7 +20,7 @@
                     <button onclick="abrirModal('login-modal')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Iniciar Sesión</button>
                 </div>
                 <button onclick="toggleCarritoModal()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition">
-                    🛒 Carrito (<span id="cart-count">0</span>)
+                    Carrito (<span id="cart-count">0</span>)
                 </button>
             </div>
         </div>
@@ -65,7 +65,7 @@
     <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h2 class="text-lg font-bold text-gray-800">🛒 Tu Carrito de Compras</h2>
+                <h2 class="text-lg font-bold text-gray-800">Tu Carrito de Compras</h2>
                 <button onclick="toggleCarritoModal()" class="text-gray-400 hover:text-gray-600 font-bold">✕</button>
             </div>
             
@@ -82,7 +82,7 @@
                 </div>
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="toggleCarritoModal()" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm">Seguir comprando</button>
-                    <button type="button" onclick="irAlCheckout()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Proceder al Checkout</button>
+                    <button id="btn-checkout-cart" type="button" onclick="irAlCheckout()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Proceder al Checkout</button>
                 </div>
             </div>
         </div>
@@ -161,8 +161,8 @@
 
     <!-- ASISTENTE INTELIGENTE / CHAT -->
     <div class="fixed bottom-4 right-4 z-50">
-        <button onclick="toggleChat()" class="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition flex items-center gap-2 font-medium text-sm">
-            💬 Asistente IA
+        <button onclick="toggleChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transition flex items-center gap-2 font-medium text-sm">
+            Asistente IA
         </button>
         <div id="chat-box" class="hidden absolute bottom-14 right-0 w-80 bg-white border rounded-xl shadow-xl p-4">
             <div class="flex justify-between items-center border-b pb-2 mb-2">
@@ -280,18 +280,24 @@
         function renderizarCarrito() {
             const container = document.getElementById('cart-items-list');
             const totalElement = document.getElementById('cart-total-price');
+            const btnCheckout = document.getElementById('btn-checkout-cart');
             container.innerHTML = '';
 
             if (carrito.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <p class="text-4xl mb-2">🛒</p>
-                        <p class="text-sm">Tu carrito está vacío.</p>
+                    <div class="text-center py-10 px-4">
+                        <p class="text-base font-semibold text-gray-700 mb-1">Tu carrito está actualmente vacío</p>
+                        <p class="text-xs text-gray-500 mb-4">Explora el catálogo y agrega productos para comenzar tu compra.</p>
                     </div>
                 `;
                 totalElement.innerText = '$0';
+                btnCheckout.disabled = true;
+                btnCheckout.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
             }
+
+            btnCheckout.disabled = false;
+            btnCheckout.classList.remove('opacity-50', 'cursor-not-allowed');
 
             let totalAcc = 0;
 
@@ -328,10 +334,7 @@
         }
 
         function irAlCheckout() {
-            if (carrito.length === 0) {
-                alert("Tu carrito está vacío. Agrega productos para continuar.");
-                return;
-            }
+            if (carrito.length === 0) return;
             toggleCarritoModal();
             toggleCheckout();
         }
@@ -447,4 +450,3 @@
         verificarSesion();
     </script>
 </body>
-</html>
