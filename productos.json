@@ -31,4 +31,60 @@
     "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
     "description": "Monitoreo cardíaco, contador de pasos y notificaciones."
   }
+  { 
+    "id": 5, 
+    "name": "Taza de Chayanne", 
+    "price": 8990, 
+    "category": "tendencias", 
+    "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd", 
+    "description": "La taza definitiva del papá de todo Latinoamérica. Ideal para empezar el día con energía." 
+  },
+  { 
+    "id": 6, 
+    "name": "Calcetines Pata de Pollo", 
+    "price": 4990, 
+    "category": "ofertas", 
+    "image": "https://images.unsplash.com/photo-1582966772680-860e372bb558", 
+    "description": "Calcetines altos con estampado fotorrealista de patas de pollo. Estilo único e inigualable." 
+  },
+  { 
+    "id": 7, 
+    "name": "Póster Tortugas Ninja", 
+    "price": 6990, 
+    "category": "tendencias", 
+    "image": "https://images.unsplash.com/photo-1563089145-599997674d42", 
+    "description": "Póster decorativo retro de las Tortugas Ninja en alta resolución." 
+  },
+  { 
+    "id": 8, 
+    "name": "Póster Baby Goofy", 
+    "price": 5999, 
+    "category": "ofertas", 
+    "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401", 
+    "description": "Tierno póster para habitación o colección del clásico Goofy en versión bebé." 
+  },
+  { 
+    "id": 9, 
+    "name": "Labubu Coleccionable", 
+    "price": 24990, 
+    "category": "tendencias", 
+    "image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f", 
+    "description": "Figura art toy de Labubu. El coleccionable viral que todos buscan." 
+  },
+  { 
+    "id": 10, 
+    "name": "Peluche de Momonga", 
+    "price": 14990, 
+    "category": "tendencias", 
+    "image": "https://images.unsplash.com/photo-1559454403-b8fb88521f11", 
+    "description": "Peluche suave y esponjoso del personaje Momonga (Chiikawa)." 
+  },
+  { 
+    "id": 11, 
+    "name": "Peine para Calvos", 
+    "price": 2990, 
+    "category": "ofertas", 
+    "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e", 
+    "description": "El regalo broma perfecto. Peine especial ultra suave con cero cerdas." 
+  }
 ]
