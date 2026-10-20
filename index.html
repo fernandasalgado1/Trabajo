@@ -14,10 +14,12 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-indigo-600">Tienda Local MVP</h1>
             <div class="flex items-center gap-4">
-                <button onclick="simularLogin()" id="btn-login" class="bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg text-sm font-medium transition">
-                    Iniciar Sesión (Google)
-                </button>
-                <button onclick="toggleCarrito()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                <!-- Sección de Usuario Dinámica -->
+                <div id="user-menu" class="flex items-center gap-2">
+                    <button onclick="abrirModal('register-modal')" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Registrarse</button>
+                    <button onclick="abrirModal('login-modal')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Iniciar Sesión</button>
+                </div>
+                <button onclick="toggleCarrito()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition">
                     🛒 Carrito (<span id="cart-count">0</span>)
                 </button>
             </div>
@@ -34,10 +36,54 @@
         </div>
 
         <!-- Catálogo de Productos -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Los productos se cargan por JS -->
-        </div>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
+
+    <!-- MODAL DE REGISTRO -->
+    <div id="register-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl">
+            <h2 class="text-lg font-bold mb-4 text-gray-800">Crear una Cuenta</h2>
+            <form onsubmit="registrarUsuario(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nombre completo</label>
+                    <input type="text" id="reg-name" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ana Pérez">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input type="email" id="reg-email" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="ana@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input type="password" id="reg-pass" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="cerrarModales()" class="px-4 py-2 border rounded-lg text-gray-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Registrarse</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE INICIO DE SESIÓN -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl">
+            <h2 class="text-lg font-bold mb-4 text-gray-800">Iniciar Sesión</h2>
+            <form onsubmit="iniciarSesion(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input type="email" id="login-email" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="ana@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input type="password" id="login-pass" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="cerrarModales()" class="px-4 py-2 border rounded-lg text-gray-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Ingresar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- MODAL DE CHECKOUT -->
     <div id="checkout-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -45,23 +91,19 @@
             <h2 class="text-lg font-bold mb-4 text-gray-800">Checkout Simulado</h2>
             <form onsubmit="procesarPago(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Nombre completo</label>
-                    <input type="text" required class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Juan Pérez">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700">Dirección de entrega</label>
-                    <input type="text" required class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Calle Falsa 123">
+                    <input type="text" required class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Calle Falsa 123">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Método de pago</label>
-                    <select class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option>Webpay Plus (Simulado)</option>
-                        <option>PayPal (Simulado)</option>
+                    <label class="block text-sm font-medium text-gray-700">Método de pago online</label>
+                    <select class="w-full border rounded-lg p-2 mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option>Webpay Plus</option>
+                        <option>PayPal</option>
                         <option>Transferencia Bancaria</option>
                     </select>
                 </div>
                 <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="toggleCheckout()" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50">Cancelar</button>
+                    <button type="button" onclick="toggleCheckout()" class="px-4 py-2 border rounded-lg text-gray-600">Cancelar</button>
                     <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Pagar Ahora</button>
                 </div>
             </form>
@@ -90,7 +132,6 @@
 
     <!-- SCRIPT DE LÓGICA -->
     <script>
-        // "Base de datos" integrada en memoria (Estructura tipo Objeto/JSON)
         const productos = [
             { id: 1, name: "Zapatillas Urbanas", price: 45990, category: "tendencias", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", description: "Zapatillas de cuero sintético con suela antideslizante." },
             { id: 2, name: "Audífonos Inalámbricos", price: 29990, category: "ofertas", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e", description: "Cancelación de ruido activa y batería de 24 horas." },
@@ -105,11 +146,6 @@
             grid.innerHTML = '';
             const filtrados = filtro === 'todos' ? productos : productos.filter(p => p.category === filtro);
             
-            if (filtrados.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No hay productos en esta categoría.</p>';
-                return;
-            }
-
             filtrados.forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border p-4 flex flex-col justify-between hover:shadow-md transition">
@@ -128,9 +164,7 @@
             });
         }
 
-        function filtrar(cat) { 
-            renderProductos(cat); 
-        }
+        function filtrar(cat) { renderProductos(cat); }
 
         function agregarAlCarrito(id) {
             const prod = productos.find(p => p.id === id);
@@ -143,15 +177,14 @@
 
         function toggleCarrito() {
             if (carrito.length === 0) {
-                alert("Tu carrito está vacío. Agrega productos para continuar.");
+                alert("Tu carrito está vacío.");
             } else {
                 toggleCheckout();
             }
         }
 
         function toggleCheckout() {
-            const modal = document.getElementById('checkout-modal');
-            modal.classList.toggle('hidden');
+            document.getElementById('checkout-modal').classList.toggle('hidden');
         }
 
         function procesarPago(e) {
@@ -162,11 +195,76 @@
             toggleCheckout();
         }
 
-        function simularLogin() {
-            const btn = document.getElementById('btn-login');
-            btn.innerText = "👤 Hola, Juan (Google)";
-            btn.className = "bg-green-100 text-green-800 font-medium px-3 py-1.5 rounded-lg text-sm";
-            alert("Sesión iniciada correctamente.");
+        // --- GESTIÓN DE USUARIOS LOCAL (LocalStorage) ---
+        function abrirModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function cerrarModales() {
+            document.getElementById('register-modal').classList.add('hidden');
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function registrarUsuario(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+
+            let usuarios = JSON.parse(localStorage.getItem('usuarios_mvp')) || [];
+            
+            // Validar si ya existe
+            if(usuarios.some(u => u.email === email)) {
+                alert("Este correo ya está registrado.");
+                return;
+            }
+
+            usuarios.push({ name, email, pass });
+            localStorage.setItem('usuarios_mvp', JSON.stringify(usuarios));
+            alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+            cerrarModales();
+            abrirModal('login-modal');
+        }
+
+        function iniciarSesion(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+
+            let usuarios = JSON.parse(localStorage.getItem('usuarios_mvp')) || [];
+            const user = usuarios.find(u => u.email === email && u.pass === pass);
+
+            if(user) {
+                localStorage.setItem('sesion_activa', JSON.stringify(user));
+                verificarSesion();
+                cerrarModales();
+                alert(`¡Bienvenido de nuevo, ${user.name}!`);
+            } else {
+                alert("Correo o contraseña incorrectos.");
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('sesion_activa');
+            verificarSesion();
+            alert("Has cerrado sesión.");
+        }
+
+        function verificarSesion() {
+            const user = JSON.parse(localStorage.getItem('sesion_activa'));
+            const menu = document.getElementById('user-menu');
+            
+            if(user) {
+                menu.innerHTML = `
+                    <span class="text-sm font-medium text-gray-700">Hola, <b>${user.name}</b></span>
+                    <button onclick="cerrarSesion()" class="text-xs text-red-600 hover:underline">Salir</button>
+                `;
+            } else {
+                menu.innerHTML = `
+                    <button onclick="abrirModal('register-modal')" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Registrarse</button>
+                    <button onclick="abrirModal('login-modal')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Iniciar Sesión</button>
+                `;
+            }
         }
 
         function toggleChat() {
@@ -183,17 +281,18 @@
             input.value = '';
 
             setTimeout(() => {
-                let respuesta = "¡Hola! Como asistente virtual, te comento que este producto cuenta con garantía y despacho rápido a todo el país.";
+                let respuesta = "¡Hola! Como asistente virtual, te comento que este producto cuenta con garantía y despacho rápido.";
                 if(userMsg.toLowerCase().includes('precio') || userMsg.toLowerCase().includes('descuento')) {
-                    respuesta = "Actualmente tenemos un 10% de descuento pagando con Webpay.";
+                    respuesta = "Tenemos un 10% de descuento pagando con Webpay.";
                 }
                 messages.innerHTML += `<div class="text-gray-700">IA: ${respuesta}</div>`;
                 messages.scrollTop = messages.scrollHeight;
             }, 500);
         }
 
-        // Inicializar la vista cargando los productos al abrir la página
+        // Inicializar
         renderProductos();
+        verificarSesion();
     </script>
 </body>
 </html>
