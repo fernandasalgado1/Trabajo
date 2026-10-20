@@ -1,3 +1,11 @@
+<ElicitationsGroup>
+¡Perfecto! Nos quedamos con la **Opción 1** (usando el archivo `productos.json` externo para mantener el código más limpio y modular). 
+
+Aquí tienes el código completo e integrado de tu **`index.html`** adaptado para cargar los productos automáticamente mediante `fetch('./productos.json')`, junto con todos los divertidos productos nuevos que me pediste ya configurados en el archivo JSON externo.
+
+### 1. El código actualizado de tu `index.html`:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -181,21 +189,32 @@
 
     <!-- SCRIPT DE LÓGICA -->
     <script>
-        const productos = [
-            { id: 1, name: "Zapatillas Urbanas", price: 45990, category: "tendencias", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff", description: "Zapatillas de cuero sintético con suela antideslizante." },
-            { id: 2, name: "Audífonos Inalámbricos", price: 29990, category: "ofertas", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e", description: "Cancelación de ruido activa y batería de 24 horas." },
-            { id: 3, name: "Mochila Ejecutiva", price: 34990, category: "tendencias", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62", description: "Resistente al agua con compartimento para laptop de 15.6 pulgadas." },
-            { id: 4, name: "Reloj Inteligente", price: 59990, category: "ofertas", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30", description: "Monitoreo cardíaco, contador de pasos y notificaciones." }
-        ];
-
+        let productos = [];
         let carrito = [];
         let productoSeleccionadoId = null;
+
+        // Cargar productos desde el archivo JSON externo
+        async function cargarProductos() {
+            try {
+                // Se agrega un parámetro de tiempo (?v=...) para evitar que el navegador guarde en caché el JSON viejo
+                const response = await fetch('./productos.json?v=' + new Date().getTime());
+                productos = await response.json();
+                renderProductos();
+            } catch (error) {
+                console.error("Error al cargar el archivo productos.json:", error);
+            }
+        }
 
         function renderProductos(filtro = 'todos') {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
             const filtrados = filtro === 'todos' ? productos : productos.filter(p => p.category === filtro);
             
+            if (filtrados.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No hay productos en esta categoría.</p>';
+                return;
+            }
+
             filtrados.forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border p-4 flex flex-col justify-between hover:shadow-md transition">
@@ -445,8 +464,8 @@
             }, 500);
         }
 
-        // Inicializar
-        renderProductos();
+        // Inicializar aplicación cargando los productos del JSON y verificando la sesión
+        cargarProductos();
         verificarSesion();
     </script>
 </body>
